@@ -15,14 +15,14 @@ class MovieService
         $this->movieRepository = $movieRepository;
     }
 
-    public function importMoviesFromTMDB($totalPages = 10, $type = 'movie')
+    public function importMoviesFromTMDB($totalPages = 10)
     {
-        $movies = $this->tmdbService->fetchAll($totalPages, $type);
+        $movies = $this->tmdbService->fetchAll($totalPages, 'movie');
         $importedCount = 0;
+        $processedIds = [];
 
         foreach ($movies as $movieData) {
-            $existingMovie = $this->movieRepository->findById($movieData['id']);
-            if (!$existingMovie) {
+            if (!in_array($movieData['id'], $processedIds)) {
                 $this->movieRepository->create([
                     'tmdb_id' => $movieData['id'],
                     'title' => $movieData['title'],
@@ -30,6 +30,7 @@ class MovieService
                     'release_date' => $movieData['release_date'],
                     'poster_path' => $movieData['poster_path'],
                 ]);
+                $processedIds[] = $movieData['id'];
                 $importedCount++;
             }
         }

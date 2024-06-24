@@ -21,9 +21,9 @@ class TMDBServiceProvider extends ServiceProvider
         });
 
         $this->app->bind(TMDBRepositoryInterface::class, MovieRepository::class, SerieRepository::class);
-        $this->app->bind(MovieRepository::class, SerieRepository::class,  function ($app) {
-            return new MovieRepository($app->make(TMDBRepositoryInterface::class), $app->make(SerieRepository::class));
-        });
+        $this->app->bind(TMDBRepositoryInterface::class, MovieRepository::class);
+        $this->app->bind(TMDBRepositoryInterface::class, SerieRepository::class);
+
     }
 
     /**

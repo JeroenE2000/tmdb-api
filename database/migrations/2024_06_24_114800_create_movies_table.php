@@ -16,7 +16,7 @@ return new class extends Migration
             $table->integer('tmdb_id')->unique();
             $table->string('title');
             $table->text('overview')->nullable();
-            $table->date('release_date')->nullable();
+            $table->string('release_date')->nullable();
             $table->string('poster_path')->nullable();
             $table->timestamps();
         });

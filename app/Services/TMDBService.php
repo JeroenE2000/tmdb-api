@@ -28,6 +28,22 @@ class TMDBService
         return $response->json();
     }
 
+    public function getSerieData ($id) {
+        $response = Http::get('https://api.themoviedb.org/3/tv/' .$id , [
+            'api_key' => $this->apiKey
+        ]);
+
+        return $response->json();
+    }
+
+    public function getSeasonData($params, $id) {
+        $response = Http::get('https://api.themoviedb.org/3/tv/' .$id , [
+            'api_key' => $this->apiKey,
+            'append_to_response' => $params['append_to_response'] ?? '',
+        ]);
+        return $response->json();
+    }
+
     /**
      * Fetches all pages of movie or series depending on the type param from the TMDB API
      * @param int $totalPages
@@ -39,12 +55,6 @@ class TMDBService
 
         for ($page = 1; $page <= $totalPages; $page++) {
             $response = $this->fetchSingle($page, $type);
-            foreach ($response['results'] as &$item) {
-                if ($item['release_date'] === '') {
-                    $item['release_date'] = null;
-                }
-            }
-
             $seriesOrMovies = array_merge($seriesOrMovies, $response['results']);
         }
 
