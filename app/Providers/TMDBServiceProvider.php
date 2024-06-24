@@ -3,11 +3,12 @@
 namespace App\Providers;
 
 use App\Interface\TMDBRepositoryInterface;
-use App\Services\MovieService;
 use Illuminate\Support\ServiceProvider;
 use App\Services\TMDBService;
 use App\Repositories\MovieRepository;
 use App\Repositories\SerieRepository;
+use App\Repositories\SeasonRepository;
+use App\Repositories\EpisodeRepository;
 
 class TMDBServiceProvider extends ServiceProvider
 {
@@ -20,9 +21,10 @@ class TMDBServiceProvider extends ServiceProvider
             return new TMDBService();
         });
 
-        $this->app->bind(TMDBRepositoryInterface::class, MovieRepository::class, SerieRepository::class);
         $this->app->bind(TMDBRepositoryInterface::class, MovieRepository::class);
         $this->app->bind(TMDBRepositoryInterface::class, SerieRepository::class);
+        $this->app->bind(TMDBRepositoryInterface::class, SeasonRepository::class);
+        $this->app->bind(TMDBRepositoryInterface::class, EpisodeRepository::class);
 
     }
 

@@ -36,13 +36,16 @@ class TMDBService
         return $response->json();
     }
 
-    public function getSeasonData($params, $id) {
-        $response = Http::get('https://api.themoviedb.org/3/tv/' .$id , [
+    public function getSeasonData($id, $seasonNumber)
+    {
+        $response = Http::get("https://api.themoviedb.org/3/tv/{$id}/season/{$seasonNumber}", [
             'api_key' => $this->apiKey,
-            'append_to_response' => $params['append_to_response'] ?? '',
         ]);
+
         return $response->json();
     }
+
+
 
     /**
      * Fetches all pages of movie or series depending on the type param from the TMDB API

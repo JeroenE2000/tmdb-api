@@ -22,19 +22,21 @@ class MovieService
         $processedIds = [];
 
         foreach ($movies as $movieData) {
-            if (!in_array($movieData['id'], $processedIds)) {
+            $tmdbId = $movieData['id'];
+            if (!isset($processedIds[$tmdbId])) {
                 $this->movieRepository->create([
-                    'tmdb_id' => $movieData['id'],
+                    'tmdb_id' => $tmdbId,
                     'title' => $movieData['title'],
                     'overview' => $movieData['overview'],
                     'release_date' => $movieData['release_date'],
                     'poster_path' => $movieData['poster_path'],
                 ]);
-                $processedIds[] = $movieData['id'];
+                $processedIds[$tmdbId] = true;
                 $importedCount++;
             }
         }
 
         return $importedCount;
     }
+
 }
