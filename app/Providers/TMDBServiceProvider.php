@@ -2,10 +2,12 @@
 
 namespace App\Providers;
 
+use App\Interface\TMDBRepositoryInterface;
 use App\Services\MovieService;
 use Illuminate\Support\ServiceProvider;
 use App\Services\TMDBService;
 use App\Repositories\MovieRepository;
+use App\Repositories\SerieRepository;
 
 class TMDBServiceProvider extends ServiceProvider
 {
@@ -18,15 +20,9 @@ class TMDBServiceProvider extends ServiceProvider
             return new TMDBService();
         });
 
-        $this->app->singleton(MovieRepository::class, function ($app) {
-            return new MovieRepository();
-        });
-
-        $this->app->singleton(MovieService::class, function ($app) {
-            return new MovieService(
-                $app->make(TMDBService::class),
-                $app->make(MovieRepository::class)
-            );
+        $this->app->bind(TMDBRepositoryInterface::class, MovieRepository::class, SerieRepository::class);
+        $this->app->bind(MovieRepository::class, SerieRepository::class,  function ($app) {
+            return new MovieRepository($app->make(TMDBRepositoryInterface::class), $app->make(SerieRepository::class));
         });
     }
 

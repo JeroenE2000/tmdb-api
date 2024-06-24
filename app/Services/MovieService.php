@@ -15,9 +15,9 @@ class MovieService
         $this->movieRepository = $movieRepository;
     }
 
-    public function importMoviesFromTMDB($totalPages = 10)
+    public function importMoviesFromTMDB($totalPages = 10, $type = 'movie')
     {
-        $movies = $this->tmdbService->fetchAllMovies($totalPages);
+        $movies = $this->tmdbService->fetchAll($totalPages, $type);
         $importedCount = 0;
 
         foreach ($movies as $movieData) {
