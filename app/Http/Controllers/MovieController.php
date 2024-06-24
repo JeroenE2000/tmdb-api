@@ -16,7 +16,7 @@ class MovieController extends Controller
 
     public function importMovies(Request $request)
     {
-        $importedCount = $this->movieService->importMoviesFromTMDB($request->totalPages ?? 10);
+        $importedCount = $this->movieService->importMoviesFromTMDB($request->totalPages ?? 10, $request->type ?? 'movie');
 
         return response()->json(['message' => "Imported $importedCount movies successfully"]);
     }
