@@ -21,8 +21,7 @@ class EpisodeService
         $seasonsData = $this->seasonRepository->findBySerieId($serieId);
         $episodesData = [];
         $importedCount = 0;
-        $serie = $this->serieRepository->findBySerieId($seasonsData[0]->serie_id)->first();
-        $tmdbId = $serie->tmdb_id;
+        $tmdbId = $this->seasonRepository->getSerieId($seasonsData[0]->id);
 
         foreach ($seasonsData as $season) {
             $seasonData = $this->tmdbService->getSeasonData($tmdbId, $season->season_number);
