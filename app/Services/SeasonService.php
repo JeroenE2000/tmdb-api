@@ -19,24 +19,25 @@ class SeasonService
     public function importSeasons($serie)
     {
         $tmdbId = $serie->tmdb_id;
-        $seasonData = $this->tmdbService->getSerieData($tmdbId);
-        if (isset($seasonData['seasons'])) {
-            $seasonsData = [];
-
-            foreach ($seasonData['seasons'] as $season) {
-                $seasonsData[] = [
-                    'tmdb_id' => $season['id'],
-                    'serie_id' => $serie->id,
-                    'season_number' => $season['season_number'],
-                    'overview' => $season['overview'],
-                    'air_date' => $season['air_date'],
-                    'created_at' => now(),
-                    'updated_at' => now(),
-                ];
-            }
-
-            $this->seasonRepository->insert($seasonsData);
-
+        $seasons = $this->tmdbService->getSerieData($tmdbId);
+        if (isset($seasons['seasons'])) {
+            $this->insertSeasons($seasons['seasons'], $serie->id);
         }
+    }
+
+    private function insertSeasons($seasons, $serieId) {
+        $seasonsData = [];
+        foreach ($seasons as $season) {
+            $seasonsData[] = [
+                'tmdb_id' => $season['id'],
+                'serie_id' => $serieId,
+                'season_number' => $season['season_number'],
+                'overview' => $season['overview'],
+                'air_date' => $season['air_date'],
+                'created_at' => now(),
+                'updated_at' => now(),
+            ];
+        }
+        $this->seasonRepository->insert($seasonsData);
     }
 }

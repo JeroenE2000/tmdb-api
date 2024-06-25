@@ -20,11 +20,5 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-
-        Http::macro('tmdb', function() {
-            return Http::withHeaders([
-                'api_key' => config('services.tmdb.api_key')
-            ])->baseUrl(config('services.tmdb.base_url'));
-        });
     }
 }

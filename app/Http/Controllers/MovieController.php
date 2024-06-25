@@ -15,4 +15,5 @@ class MovieController extends Controller
 
         return response()->json(['message' => "Imported $importedCount movies successfully"]);
     }
+
 }

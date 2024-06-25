@@ -18,36 +18,39 @@ class EpisodeService
 
     public function importEpisodesForSeries($serieId)
     {
-        $seasonsData = $this->seasonRepository->findBySerieId($serieId);
-        $episodesData = [];
+        $seasons = $this->seasonRepository->findBySerieId($serieId);
         $importedCount = 0;
-        $tmdbId = $this->seasonRepository->getSerieId($seasonsData[0]->id);
+        $tmdbId = $this->seasonRepository->getSerieId($seasons[0]->id);
 
-        foreach ($seasonsData as $season) {
-            $seasonData = $this->tmdbService->getSeasonData($tmdbId, $season->season_number);
-            if (isset($seasonData['episodes'])) {
-                $episodes = $seasonData['episodes'];
-
-                foreach ($episodes as $episode) {
-                    $existingEpisode = $this->episodeRepository->findByTmdbId($episode['id']);
-
-                    if ($existingEpisode === null) {
-                        $episodesData[] = [
-                            'tmdb_id' => $episode['id'],
-                            'episode_number' => $episode['episode_number'],
-                            'name' => $episode['name'],
-                            'overview' => $episode['overview'],
-                            'air_date' => $episode['air_date'],
-                            'season_id' => $season->id,
-                        ];
-
-                        $importedCount++;
-                    }
-                }
-
+        foreach ($seasons as $season) {
+            $episodes = $this->tmdbService->getSeasonData($tmdbId, $season->season_number);
+            if (isset($episodes['episodes'])) {
+               $importedCount += $this->insertEpisodes($episodes['episodes'], $season->id);
             }
         }
 
+        return $importedCount;
+    }
+
+    private function insertEpisodes($episodes, $seasonId): int {
+        $importedCount = 0;
+        foreach ($episodes as $episode) {
+            $existingEpisode = $this->episodeRepository->findByTmdbId($episode['id']);
+
+            if ($existingEpisode === null) {
+                $episodesData[] = [
+                    'tmdb_id' => $episode['id'],
+                    'episode_number' => $episode['episode_number'],
+                    'name' => $episode['name'],
+                    'overview' => $episode['overview'],
+                    'air_date' => $episode['air_date'],
+                    'season_id' => $seasonId,
+                ];
+
+                $importedCount++;
+            }
+        }
+        
         if (!empty($episodesData)) {
             $this->episodeRepository->insert($episodesData);
         }
