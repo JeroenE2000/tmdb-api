@@ -21,4 +21,9 @@ class EpisodeRepository implements TMDBRepositoryInterface
     {
         return Episode::insert($episodesData);
     }
+
+    public function findByTmdbId($tmdbId)
+    {
+        return Episode::where('tmdb_id', $tmdbId)->first();
+    }
 }

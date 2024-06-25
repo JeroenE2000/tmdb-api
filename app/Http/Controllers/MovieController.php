@@ -7,12 +7,7 @@ use Illuminate\Http\Request;
 
 class MovieController extends Controller
 {
-    protected $movieService;
-
-    public function __construct(MovieService $movieService)
-    {
-        $this->movieService = $movieService;
-    }
+    public function __construct(protected MovieService $movieService){}
 
     public function importMovies(Request $request)
     {

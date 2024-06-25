@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Repositories\EpisodeRepository;
 use App\Repositories\SeasonRepository;
 use App\Services\EpisodeService;
 use App\Services\TMDBService;
@@ -10,6 +11,7 @@ class SeasonService
 {
     public function __construct(
         protected SeasonRepository $seasonRepository,
+        protected EpisodeRepository $episodeRepository,
         protected EpisodeService $episodeService,
         protected TMDBService $tmdbService
     ) {}
@@ -18,9 +20,9 @@ class SeasonService
     {
         $tmdbId = $serie->tmdb_id;
         $seasonData = $this->tmdbService->getSerieData($tmdbId);
-
         if (isset($seasonData['seasons'])) {
             $seasonsData = [];
+
             foreach ($seasonData['seasons'] as $season) {
                 $seasonsData[] = [
                     'tmdb_id' => $season['id'],
@@ -35,11 +37,6 @@ class SeasonService
 
             $this->seasonRepository->insert($seasonsData);
 
-            $tmdbIds = array_column($seasonsData, 'tmdb_id');
-            $newSeasons = $this->seasonRepository->findByIds($tmdbIds);
-            foreach ($newSeasons as $season) {
-                $this->episodeService->importEpisodes($season);
-            }
         }
     }
 }

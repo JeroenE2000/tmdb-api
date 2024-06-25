@@ -17,6 +17,11 @@ class SeasonRepository implements TMDBRepositoryInterface
         return Season::whereIn('tmdb_id', $tmdbIds)->get();
     }
 
+    public function findBySerieId($serieId)
+    {
+        return Season::where('serie_id', $serieId)->get();
+    }
+
     public function create(array $serieData)
     {
         return Season::create($serieData);

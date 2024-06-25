@@ -22,6 +22,11 @@ class SerieRepository implements TMDBRepositoryInterface
         return Serie::whereIn('tmdb_id', $tmdbIds)->get();
     }
 
+    public function findBySerieId($serieId)
+    {
+        return Serie::where('id', $serieId)->get('tmdb_id');
+    }
+
     public function create(array $serieData)
     {
         return Serie::create($serieData);
