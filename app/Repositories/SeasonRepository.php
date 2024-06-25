@@ -12,6 +12,11 @@ class SeasonRepository implements TMDBRepositoryInterface
         return Season::find($tmdbId);
     }
 
+    public function findByIds(array $tmdbIds)
+    {
+        return Season::whereIn('tmdb_id', $tmdbIds)->get();
+    }
+
     public function create(array $serieData)
     {
         return Season::create($serieData);
@@ -20,6 +25,11 @@ class SeasonRepository implements TMDBRepositoryInterface
     public function getNumberOfSeasons($serieId)
     {
         return Season::where('serie_id', $serieId)->count();
+    }
+
+    public function insert(array $seasonsData)
+    {
+        Season::insert($seasonsData);
     }
 
     public function getSerieId($seasonId)

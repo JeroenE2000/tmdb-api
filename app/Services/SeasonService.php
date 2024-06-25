@@ -3,55 +3,43 @@
 namespace App\Services;
 
 use App\Repositories\SeasonRepository;
-use App\Repositories\EpisodeRepository;
-use App\Repositories\SerieRepository;
+use App\Services\EpisodeService;
+use App\Services\TMDBService;
 
 class SeasonService
 {
-    protected $seasonRepository;
-    protected $episodeService;
-    protected $tmdbService;
-
     public function __construct(
-        SeasonRepository $seasonRepository,
-        EpisodeService $episodeService,
-        TMDBService $tmdbService
-    ) {
-        $this->seasonRepository = $seasonRepository;
-        $this->episodeService = $episodeService;
-        $this->tmdbService = $tmdbService;
-    }
+        protected SeasonRepository $seasonRepository,
+        protected EpisodeService $episodeService,
+        protected TMDBService $tmdbService
+    ) {}
 
-    public function saveSeason($serieId, array $seasonData)
-    {
-
-        $season = $this->seasonRepository->findById($seasonData['tmdb_id']);
-        if (!$season) {
-            $seasonData['serie_id'] = $serieId;
-            return $this->seasonRepository->create($seasonData);
-        }
-       return;
-    }
-
-    public function importSeason($serie)
+    public function importSeasons($serie)
     {
         $tmdbId = $serie->tmdb_id;
         $seasonData = $this->tmdbService->getSerieData($tmdbId);
 
         if (isset($seasonData['seasons'])) {
+            $seasonsData = [];
             foreach ($seasonData['seasons'] as $season) {
-                $newSeason = $this->saveSeason($serie->id, [
+                $seasonsData[] = [
                     'tmdb_id' => $season['id'],
+                    'serie_id' => $serie->id,
                     'season_number' => $season['season_number'],
                     'overview' => $season['overview'],
                     'air_date' => $season['air_date'],
-                ]);
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ];
+            }
 
-                if ($newSeason) {
-                    $this->episodeService->importEpisodes($newSeason);
-                }
+            $this->seasonRepository->insert($seasonsData);
+
+            $tmdbIds = array_column($seasonsData, 'tmdb_id');
+            $newSeasons = $this->seasonRepository->findByIds($tmdbIds);
+            foreach ($newSeasons as $season) {
+                $this->episodeService->importEpisodes($season);
             }
         }
     }
-
 }

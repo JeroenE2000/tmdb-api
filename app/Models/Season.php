@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Season extends Model
 {
-    protected $fillable = ['tmdb_id', 'serie_id', 'season_number', 'overview', 'air_date'];
+    protected $guarded = ['id'];
     use HasFactory;
 
     public function serie()
