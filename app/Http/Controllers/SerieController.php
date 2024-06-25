@@ -21,6 +21,6 @@ class Seriecontroller extends Controller
     {
         $importedCount = $this->serieService->importSeriesFromTMDB($request->totalPages ?? 10);
 
-        return response()->json(['message' => "Imported $importedCount movies successfully"]);
+        return response()->json(['message' => "Imported $importedCount series successfully"]);
     }
 }

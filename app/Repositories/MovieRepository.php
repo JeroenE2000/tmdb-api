@@ -13,6 +13,11 @@ class MovieRepository implements TMDBRepositoryInterface
         return Movie::where('tmdb_id', $tmdbId)->first();
     }
 
+    public function findByTmdbId($tmdbId)
+    {
+        return Movie::where('tmdb_id', $tmdbId)->first();
+    }
+
     public function create(array $movieData)
     {
         return Movie::create($movieData);

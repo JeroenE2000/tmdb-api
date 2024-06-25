@@ -19,20 +19,10 @@ class EpisodeService
         $this->tmdbService = $tmdbService;
     }
 
-    public function saveEpisodes($seasonId, array $episodesData)
-    {
-        foreach ($episodesData as &$episodeData) {
-            $episodeData['season_id'] = $seasonId;
-        }
-        $this->episodeRepository->insert($episodesData);
-    }
-
-
     public function importEpisodes($season)
     {
         $serieId = $this->seasonRepository->getSerieId($season->id);
         $seasonData = $this->tmdbService->getSeasonData($serieId, $season->season_number);
-
         if (isset($seasonData['episodes'])) {
             $episodes = $seasonData['episodes'];
             $episodesData = [];
@@ -44,10 +34,11 @@ class EpisodeService
                     'name' => $episode['name'],
                     'overview' => $episode['overview'],
                     'air_date' => $episode['air_date'],
+                    'season_id' => $season->id
                 ];
             }
 
-            $this->saveEpisodes($season->id, $episodesData);
+            $this->episodeRepository->insert($episodesData);
         }
     }
 
