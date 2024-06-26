@@ -2,7 +2,7 @@
 
 ## Overview
 
-This Laravel application integrates with The Movie Database (TMDB) API to import movies and TV series data into a local database. It uses a repository pattern for database interactions and separates business logic into services for clean architecture. The application provides two main endpoints for importing data from TMDB based on the number of pages specified in the request.
+This Laravel application integrates with The Movie Database (TMDB) API to import movies and TV series data into a local database. It uses a repository pattern for database interactions and separates business logic into services for clean architecture. The application provides three endpoints for importing data from the TMDB Api.
 
 ## Features
 
@@ -181,8 +181,19 @@ The `importEpisodesForSeries` method in the `EpisodeService` class demonstrates 
 
 4. **Inserting Episodes**: Upon finding episodes, it populates an array in preparation for database insertion, ensuring no duplicates by verifying the non-existence of each episode.
     ```php
+    $existingEpisode = $this->episodeRepository->findByTmdbId($episode['id']);
+    
     if ($existingEpisode === null) {
-        // Prepare episode data for insertion
+        $episodesData[] = [
+            'season_id' => $season->id,
+            'tmdb_id' => $episode['id'],
+            'episode_number' => $episode['episode_number'],
+            'name' => $episode['name'],
+            'overview' => $episode['overview'],
+            'air_date' => $episode['air_date'],
+            'created_at' => now(),
+            'updated_at' => now(),
+        ];
     }
     ```
 
@@ -193,5 +204,3 @@ The `importEpisodesForSeries` method in the `EpisodeService` class demonstrates 
     ```
 
 This method efficiently handles the import of episodes by leveraging the TMDB API, ensuring data integrity through duplicate checks, and optimizing database interactions with bulk insertions.
-
-
