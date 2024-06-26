@@ -22,18 +22,18 @@ class MovieService
         $importedCount = 0;
         $processedIds = [];
 
-        foreach ($movies as $movieData) {
-            $tmdbId = $movieData['id'];
+        foreach ($movies as $movie) {
+            $tmdbId = $movie['id'];
 
             $existingMovie = $this->movieRepository->findByTmdbId($tmdbId);
 
             if ($existingMovie === null) {
                 $this->movieRepository->create([
                     'tmdb_id' => $tmdbId,
-                    'title' => $movieData['title'],
-                    'overview' => $movieData['overview'],
-                    'release_date' => $movieData['release_date'],
-                    'poster_path' => $movieData['poster_path'],
+                    'title' => $movie['title'],
+                    'overview' => $movie['overview'],
+                    'release_date' => $movie['release_date'],
+                    'poster_path' => $movie['poster_path'],
                 ]);
 
                 $processedIds[$tmdbId] = true;

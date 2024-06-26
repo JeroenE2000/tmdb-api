@@ -7,15 +7,8 @@ use Illuminate\Http\Request;
 
 class Seriecontroller extends Controller
 {
-    protected $serieService;
-    protected $seasonService;
-    protected $episodeService;
 
-    public function __construct(SerieService $serieService)
-    {
-        $this->serieService = $serieService;
-
-    }
+    public function __construct(protected SerieService $serieService) {}
 
     public function importSeries(Request $request)
     {

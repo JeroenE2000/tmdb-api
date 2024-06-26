@@ -7,10 +7,6 @@ use App\Interface\TMDBRepositoryInterface;
 
 class SerieRepository implements TMDBRepositoryInterface
 {
-    public function findById($tmdbId)
-    {
-        return Serie::where('tmdb_id', $tmdbId)->get();
-    }
 
     public function findByTmdbId($tmdbId)
     {
@@ -22,13 +18,18 @@ class SerieRepository implements TMDBRepositoryInterface
         return Serie::whereIn('tmdb_id', $tmdbIds)->get();
     }
 
-    public function create(array $serieData)
+    public function findBySerieId($serieId)
     {
-        return Serie::create($serieData);
+        return Serie::where('id', $serieId)->get('tmdb_id');
     }
 
-    public function insert(array $serieData)
+    public function create(array $serie)
     {
-        return Serie::insert($serieData);
+        return Serie::create($serie);
+    }
+
+    public function insert(array $series)
+    {
+        return Serie::insert($series);
     }
 }
