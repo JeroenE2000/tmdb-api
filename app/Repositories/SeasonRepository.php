@@ -7,29 +7,24 @@ use App\Interface\TMDBRepositoryInterface;
 
 class SeasonRepository implements TMDBRepositoryInterface
 {
-    public function findById($tmdbId)
+    public function findByTmdbId($tmdbId)
     {
-        return Season::find($tmdbId);
+        return Season::where('tmdb_id', $tmdbId)->first();
     }
 
-    public function findByIds(array $tmdbIds)
+    public function findBySerieId($serieId)
     {
-        return Season::whereIn('tmdb_id', $tmdbIds)->get();
+        return Season::where('serie_id', $serieId)->get();
     }
 
-    public function create(array $serieData)
+    public function create(array $season)
     {
-        return Season::create($serieData);
+        return Season::create($season);
     }
 
-    public function getNumberOfSeasons($serieId)
+    public function insert(array $seasons)
     {
-        return Season::where('serie_id', $serieId)->count();
-    }
-
-    public function insert(array $seasonsData)
-    {
-        Season::insert($seasonsData);
+        Season::insert($seasons);
     }
 
     public function getSerieId($seasonId)

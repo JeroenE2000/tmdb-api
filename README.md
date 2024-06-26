@@ -6,7 +6,8 @@ This Laravel application integrates with The Movie Database (TMDB) API to import
 
 ## Features
 
-- **Series Import**: Import TV series along with their seasons and episodes from TMDB.
+- **Series Import**: Import TV series along with their seasons from TMDB.
+- **Episodes Import**: Import episodes for each season of a TV series from TMDB.
 - **Movies Import**: Import movies from TMDB.
 - **Repository Pattern**: Utilizes the repository pattern for database operations, providing a clean abstraction layer.
 - **Service Layer**: Contains business logic separated from the controller logic, making the application easier to maintain.
@@ -49,13 +50,19 @@ This Laravel application integrates with The Movie Database (TMDB) API to import
 
 - **Endpoint**: `http://localhost:8000/api/series/import?totalPages=1`
 - **Method**: GET
-- **Description**: Imports TV series along with their seasons and episodes based on the number of pages specified.
+- **Description**: Imports TV series along with their seasons based on the number of pages specified.
 
 ### Import Movies
 
 - **Endpoint**: `http://localhost:8000/api/movies/import?type=movie&totalPages=25`
 - **Method**: GET
 - **Description**: Imports movies based on the number of pages specified.
+
+#### Import Episodes for a TV Series
+
+- **Endpoint**: `http://localhost:8000/api/series/{serie_id}/import-episodes?serie_id=121`
+- **Method**: GET
+- **Description**: Imports episodes for a specific season of a TV series.
 
 ## Structure
 
@@ -134,11 +141,57 @@ The application follows a standard Laravel folder structure:
 - **Endpoint**: `http://localhost:8000/api/series/import?totalPages=1`
 - **Method**: GET
 - **Parameters**: `totalPages` (optional, default: 1)
-- **Description**: Imports TV series along with their seasons and episodes based on the specified number of pages.
+- **Description**: Imports TV series along with their seasons based on the specified number of pages.
 
 ### Import Movies
 
-- **Endpoint**: `http://localhost:8000/api/movies/import?type=movie&totalPages=25`
+- **Endpoint**: `http://localhost:8000/api/movies/import?totalPages=25`
 - **Method**: GET
-- **Parameters**: `type` (optional, default: 'movie'), `totalPages`
+- **Parameters**: `totalPages`
 - **Description**: Imports movies based on the specified number of pages.
+
+### Import Episodes for a TV Series
+
+- **Endpoint**: `http://localhost:8000/api/series/{serie_id}/import-episodes?serie_id=121`
+- **Method**: GET
+- **Parameters**: `serie_id`
+- **Description**: Imports episodes for a specific tv-serie based on the id of a TV series.
+
+### Code example for Importing Episodes for a TV Series
+
+The `importEpisodesForSeries` method in the `EpisodeService` class demonstrates the process of importing episodes for a specific TV series. Here's a breakdown of its logic:
+
+1. **Fetching Seasons**: It starts by fetching all seasons associated with the given series ID using the `SeasonRepository`.
+
+    ```php
+    $seasons = $this->seasonRepository->findBySerieId($serieId);
+    ```
+
+2. **Retrieving TMDB ID**: For the TMDB API calls, it retrieves the TMDB ID of the series from the first season's data.
+
+    ```php
+    $tmdbId = $this->seasonRepository->getSerieId($seasons[0]->id);
+    ```
+
+3. **Iterating Over Seasons**: For each season, it fetches the episodes from the TMDB API.
+
+    ```php
+    $episodes = $this->tmdbService->getSeasonData($tmdbId, $season->season_number);
+    ```
+
+4. **Inserting Episodes**: Upon finding episodes, it populates an array in preparation for database insertion, ensuring no duplicates by verifying the non-existence of each episode.
+    ```php
+    if ($existingEpisode === null) {
+        // Prepare episode data for insertion
+    }
+    ```
+
+5. **Bulk Insertion**: After preparing the data for all episodes in a season, it performs a bulk insertion to the database.
+
+    ```php
+    $this->episodeRepository->insert($episodesData);
+    ```
+
+This method efficiently handles the import of episodes by leveraging the TMDB API, ensuring data integrity through duplicate checks, and optimizing database interactions with bulk insertions.
+
+
