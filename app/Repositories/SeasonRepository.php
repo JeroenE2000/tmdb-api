@@ -7,9 +7,9 @@ use App\Interface\TMDBRepositoryInterface;
 
 class SeasonRepository implements TMDBRepositoryInterface
 {
-    public function findById($tmdbId)
+    public function findByTmdbId($tmdbId)
     {
-        return Season::find($tmdbId);
+        return Season::where('tmdb_id', $tmdbId)->first();
     }
 
     public function findBySerieId($serieId)
@@ -17,14 +17,14 @@ class SeasonRepository implements TMDBRepositoryInterface
         return Season::where('serie_id', $serieId)->get();
     }
 
-    public function create(array $serieData)
+    public function create(array $season)
     {
-        return Season::create($serieData);
+        return Season::create($season);
     }
 
-    public function insert(array $seasonsData)
+    public function insert(array $seasons)
     {
-        Season::insert($seasonsData);
+        Season::insert($seasons);
     }
 
     public function getSerieId($seasonId)

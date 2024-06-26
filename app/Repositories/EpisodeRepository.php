@@ -12,14 +12,14 @@ class EpisodeRepository implements TMDBRepositoryInterface
         return Episode::find($tmdbId);
     }
 
-    public function create(array $serieData)
+    public function create(array $serie)
     {
-        return Episode::create($serieData);
+        return Episode::create($serie);
     }
 
-    public function insert(array $episodesData)
+    public function insert(array $episodes)
     {
-        return Episode::insert($episodesData);
+        return Episode::insert($episodes);
     }
 
     public function findByTmdbId($tmdbId)
