@@ -19,6 +19,9 @@ class EpisodeService
     public function importEpisodesForSeries($serieId)
     {
         $seasons = $this->seasonRepository->findBySerieId($serieId);
+        if($seasons->isEmpty()) {
+            return 0;
+        }
         $importedCount = 0;
         $tmdbId = $this->seasonRepository->getSerieId($seasons[0]->id);
 
@@ -50,7 +53,7 @@ class EpisodeService
                 $importedCount++;
             }
         }
-        
+
         if (!empty($episodesData)) {
             $this->episodeRepository->insert($episodesData);
         }
